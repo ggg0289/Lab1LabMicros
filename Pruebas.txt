@@ -1,0 +1,72 @@
+%macro Imprimir_pantalla 2
+	mov rax, 1 
+	mov rdi, 1
+	mov rsi, %1
+	mov rdx, %2
+	syscall
+%endmacro
+
+%macro leer_texto 2
+	mov rax, 0
+	mov rdi, 0
+	mov rsi, %1
+	mov rdx, %2
+	syscall
+%endmacro
+
+section .data
+	
+	linea_0: 	db '*********************************************', 0ax				
+	l0_tamano: equ $-linea_0
+
+	enter: 		db'', 0ax
+	lenter_tamano: equ $-enter
+
+	linea_1: 	db '*********************************************', 0ax
+	l1_tamano: equ $-linea_1
+	
+	linea_2: 	db 'No contiene las llamadas cpuid',0xa
+	l2_tamano: equ $-linea_2
+	
+	linea_3: 	db 'Vendedor: "xxxxxxxxxxxx"', 0ax
+	l3_tamano: equ $-linea_3
+
+section .bss
+	infoCPU: 	resb	48
+	vendor_id	resd	12
+	version	resd	4
+	features	resd	4
+	i			resd	4
+	curfeat	resd	4	
+	prueba	resd	4	
+section .text
+	global _start
+	global _primera
+	global _segunda
+	global _tercera
+	global _cuarta
+
+_start:
+	
+
+	mov rax,80000002H
+	mov rcx,0
+	cpuid
+	mov [infoCPU],rax
+	mov [infoCPU + 0x4],rbx
+	mov [infoCPU + 0x8],rcx
+	mov [infoCPU + 0xc],rdx
+
+	mov rax,60
+	mov rdi,0
+	syscall
+	
+.error:
+	Imprimir_pantalla enter, lenter_tamano
+
+	
+	Imprimir_pantalla linea_2, l2_tamano
+
+	mov rax,60
+	mov rdi,0
+	syscall
